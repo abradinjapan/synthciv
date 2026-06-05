@@ -4,6 +4,7 @@
 #include "basic.hpp"
 #include "window.hpp"
 #include "shaders.hpp"
+#include <SDL3/SDL_events.h>
 
 /* Game Loop */
 namespace synthciv {
@@ -103,9 +104,15 @@ namespace synthciv {
                 // check for quit
                 while (SDL_PollEvent(&temp_event)) {
                     switch (temp_event.type) {
+                    // in case of game stop
                     case SDL_EVENT_QUIT:
                         // stop game
                         is_running = false;
+
+                        break;
+                    // in case of window resize
+                    case SDL_EVENT_WINDOW_PIXEL_SIZE_CHANGED:
+                        glViewport(0, 0, temp_event.window.data1, temp_event.window.data2);
 
                         break;
                     default:

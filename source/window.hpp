@@ -29,6 +29,12 @@ namespace synthciv::graphics {
             width = _width;
             height = _height;
         }
+
+        // update size (DOES NOT UPDATE OPENGL, just updates the values)
+        void update_window_size(synthciv::graphics::window_width _width, synthciv::graphics::window_height _height) {
+            width = _width;
+            height = _height;
+        }
     };
 
     // window
@@ -58,7 +64,7 @@ namespace synthciv::graphics {
             SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 
             // initalize window
-            window_context = SDL_CreateWindow((const char*)style.title.c_str(), style.width, style.height, SDL_WINDOW_OPENGL /*| SDL_WINDOW_RESIZABLE*/);
+            window_context = SDL_CreateWindow((const char*)style.title.c_str(), style.width, style.height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
             if (window_context == 0) {
                 // return error
                 return synthciv::error(true, "\"error\": {\"reason\": \"Failed to create SDL3 window context.\"}");
@@ -102,11 +108,20 @@ namespace synthciv::graphics {
 
         // setup at loop end to setup next frame
         void next_frame() {
-            // clear buffer
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
             // display window data
             SDL_GL_SwapWindow(window_context);
+
+            // clear buffer
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
+
+        // update window size
+        void update_window_size(synthciv::graphics::window_width _width, synthciv::graphics::window_height _height) {
+            // update stats
+            window_styling.update_window_size(_width, _height);
+
+            // update OpenGL
+            glViewport(0, 0, (GLsizei)_width, (GLsizei)_height);
         }
     };
 }
